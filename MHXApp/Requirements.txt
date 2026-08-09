@@ -1,0 +1,6 @@
+Django
+mysqlclient
+pymysql
+djangorestframework
+cloudinary
+django-oauth-toolkit
