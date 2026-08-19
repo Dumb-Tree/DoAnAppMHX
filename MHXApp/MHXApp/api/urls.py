@@ -3,4 +3,5 @@ from . import views
 urlpatterns = [
     path('divisions/', include('api.division.urls')),
     path('users/', include('api.users.urls')),
+    
 ]

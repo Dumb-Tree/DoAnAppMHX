@@ -29,6 +29,7 @@ class UserView(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView, g
             "role": request.user.role,
             "MSSV": request.user.MSSV,
             "avatar": request.user.avatar.url if request.user.avatar else None,
+            "division": request.user.division.id if request.user.division else None,
         })
     def get_queryset(self):
         queryset = User.objects.all()
@@ -40,3 +41,9 @@ class UserView(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView, g
         if Division:
             queryset = queryset.filter(Division=Division)
         return queryset
+    
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return [permissions.IsAuthenticated()]
+    
+        return [permissions.AllowAny()]

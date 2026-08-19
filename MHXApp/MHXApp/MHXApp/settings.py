@@ -21,13 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-h!y@003e8-+t+xl__oi^7dvirkn+vug8pji5@k$96@s=_h(98k'
-#import os
-#import pymysql
+import os
+import pymysql
 import cloudinary.api
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 cloudinary.config(
     cloud_name='tzeblcjm',
@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'api.division',
     'api.users',
     'oauth2_provider',
+    'rest_framework_swagger',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -95,7 +97,7 @@ DATABASES = {
         
     }
 }
-
+pymysql.install_as_MySQLdb()
 AUTH_USER_MODEL = 'users.User'
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
