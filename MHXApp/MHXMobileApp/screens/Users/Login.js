@@ -6,13 +6,12 @@ import { useNavigation } from "@react-navigation/native";
 import Apis, { authApis, endpoints } from "../../utils/Apis";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MyUserContext } from "../../utils/Contexts/MyContexts";
-//import { OAUTH_CLIENT_ID , OAUTH_CLIENT_SECRET } from "@env"
+import { OAUTH_CLIENT_ID , OAUTH_CLIENT_SECRET } from "@env"
 const Login = ({ route }) => {
     const [user, setUser] = useState({ username: '', password: '' });
     const [errMsg, setErrMsg] = useState("");
     const [loading, setLoading] = useState(false);
     const [seePassword, setSeePassword] = useState(true);
-                console.log("Calling:", endpoints.current_user);
     const nav = useNavigation();
     const { dispatch } = useContext(MyUserContext);
     const updateState = (field, value) => {
@@ -31,8 +30,8 @@ const Login = ({ route }) => {
             console.log("Username:" + user.username);
             console.log("Password:" + user.password);
             const formData = new FormData();
-            formData.append('client_id', "y0c5Uvt8POmooEPGJesln151zvf5GMA6wisV6udS");
-            formData.append('client_secret', "jN1qkzenzdDN5FP9F8ZURUBFoy8Ae9JNDgiSbFoWJat0Ef4cWWF8amAdA3uGjEOIrBeiw2BojECx6lPxPoVpfzU3fGBJP1TLYcXFkRasAmO7wEqYKpjLtXris1FmC4cX");
+            formData.append('client_id', OAUTH_CLIENT_ID);
+            formData.append('client_secret', OAUTH_CLIENT_SECRET);
             formData.append('grant_type', 'password');
             formData.append('username', user.username);
             formData.append('password', user.password);
@@ -57,8 +56,7 @@ const Login = ({ route }) => {
             }
                 
         } catch (ex) {
-            console.error(ex);
-            if (ex.response && ex.response.status === 401) {
+            if (ex.response && ex.response.status === 400) {
                 setErrMsg("Sai tên đăng nhập hoặc mật khẩu!");
             } else {
                 setErrMsg("Lỗi hệ thống! Vui lòng thử lại sau.");
@@ -71,7 +69,6 @@ const Login = ({ route }) => {
     return (
         <View style={[MyStyles.padding, { flex: 1, justifyContent: 'center' }]}>
             <Text style={[MyStyles.title, { textAlign: 'center', marginBottom: 20 }]}>ĐĂNG NHẬP</Text>
-
             <TextInput
                 label="Tên đăng nhập"
                 value={user.username}
@@ -95,22 +92,11 @@ const Login = ({ route }) => {
             <HelperText type="error" visible={errMsg ? true : false}>
                 {errMsg}
             </HelperText>
-
-            <Button 
-                style={MyStyles.button}
-                loading={loading} 
-                disabled={loading} 
-                mode="contained" 
-                onPress={login}
-            >
+            <Button style={MyStyles.button} loading={loading} disabled={loading} mode="contained" onPress={login}>
                 Đăng nhập
             </Button>
             
-            <Button
-                mode="text" 
-                onPress={() => nav.navigate("Register")}
-                style={{ marginTop: 10 }}
-            >
+            <Button mode="text" onPress={() => nav.navigate("Register")}>
                 Chưa có tài khoản? Đăng ký ngay
             </Button>
         </View>

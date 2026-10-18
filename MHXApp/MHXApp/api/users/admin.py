@@ -1,13 +1,42 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
+
 from .models import User
 
 # Register your models here.
-class UserAdmin(admin.ModelAdmin):
-    list_display = ["id","hoTen","created_date","active"]
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+
+    list_display = [
+        "id",
+        "username",
+        "MSSV",
+        "email",
+        "role",
+        "division",
+        "is_active",
+    ]
+
+    fieldsets = UserAdmin.fieldsets + (
+        ("MHX Information", {
+            "fields": (
+                "MSSV",
+                "role",
+                "division",
+                "avatar",
+                "image_view",
+            ),
+        }),
+    )
+
     readonly_fields = ["image_view"]
-    def image_view(self, BacSi):
-        if BacSi.image:
-            return mark_safe(f'<img src="/static/{User.image.name}" width="200" />')
+
+    def image_view(self, obj):
+        if obj.avatar:
+            return mark_safe(
+                f'<img src="{obj.avatar.url}" width="200" />'
+            )
+        return "No image"
         
-admin.site.register(User)
+    image_view.short_description = "Avatar"

@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions, generics
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth import authenticate, login as django_login
+from rest_framework import status
 
 from api.division.models import Division
 
@@ -16,7 +18,6 @@ class UserView(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView, g
     serializer_class = UserSerializer
     parser_classes = [MultiPartParser,]
     permission_classes=[permissions.IsAuthenticated]
-    #pagination_class = UserPaginator
 
     @action(methods=['get'], detail=False, permission_classes=[permissions.IsAuthenticated])
     def current_user(self, request):
@@ -47,3 +48,16 @@ class UserView(viewsets.ViewSet, generics.CreateAPIView, generics.ListAPIView, g
             return [permissions.IsAuthenticated()]
     
         return [permissions.AllowAny()]
+    
+    @action(methods=['post'], detail=False, permission_classes=[permissions.AllowAny])
+    def login(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            django_login(request, user)
+            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        elif not username or not password:
+            return Response({"detail": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)   
+        else:
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
