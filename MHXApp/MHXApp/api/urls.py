@@ -3,5 +3,5 @@ from . import views
 urlpatterns = [
     path('divisions/', include('api.division.urls')),
     path('users/', include('api.users.urls')),
-    
+    path('activities/',include('api.activities.urls')),
 ]

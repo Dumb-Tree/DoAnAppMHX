@@ -19,20 +19,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h!y@003e8-+t+xl__oi^7dvirkn+vug8pji5@k$96@s=_h(98k'
+# SECURITY WARNING: keep the t key used in production secret!
+
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 import pymysql
 import cloudinary.api
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-h!y@003e8-+t+xl__oi^7dvirkn+vug8pji5@k$96@s=_h(98k")
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env_path = BASE_DIR / ".env"
+load_dotenv(env_path)
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
 cloudinary.config(
-    cloud_name='tzeblcjm',
-    api_key='812897955947868',
-    api_secret='xoponCR11oTlqHuBa7u5QMYHGYo'
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
 # Application definition
 
@@ -48,6 +57,8 @@ INSTALLED_APPS = [
     'api',
     'api.division',
     'api.users',
+    'api.activities',
+    'api.campaign',
     'oauth2_provider',
     'rest_framework_swagger',
     'drf_yasg',
@@ -122,6 +133,7 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     )
 }
+SWAGGER_USE_COMPAT_RENDERERS = False
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 

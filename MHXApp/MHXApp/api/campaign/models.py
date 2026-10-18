@@ -3,9 +3,8 @@ from api.models import BaseModel
 
 class Campaign(BaseModel):
     id = models.AutoField(primary_key=True)
-    campaignName = models.CharField(max_length=50, blank=False, null=False)
-    campaignYear = models.IntegerField(blank=False, null=False)
-    campaignStartDate = models.DateField(blank=False, null=False)
-    campaignEndDate = models.DateField(blank=False, null=False)
+    campaignYear = models.IntegerField(unique=True,blank=False, null=False)
+    campaignStartDate = models.DateTimeField(blank=False, null=False)
+    campaignEndDate = models.DateTimeField(blank=False, null=False)
     def __str__(self):
-        return self.campaignName
+        return f"Mùa Hè Xanh {self.campaignYear}"

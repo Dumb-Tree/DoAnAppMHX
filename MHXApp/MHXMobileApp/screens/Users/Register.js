@@ -30,12 +30,12 @@ const Register = () => {
     }, {
         "label": "Mật khẩu",
         "field": "password",
-        "icon": "eye",
+        "icon": "lock",
         "secureTextEntry": true
     }, {
         "label": "Xác nhận mật khẩu",
         "field": "confirm",
-        "icon": "eye",
+        "icon": "check",
         "secureTextEntry": true
     }];
 
@@ -54,14 +54,29 @@ const Register = () => {
             Alert.alert("Permission denied!");
     }
 
+    const validatePassword = (password) => {
+    const passwordRegex =
+        /^(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.*[a-z])(?=.*\d).{8,12}$/;
+
+    return passwordRegex.test(password);
+};
     const validate = () => {
         if (!user.password || !user.confirm || user.password !== user.confirm) {
             setErrMsg("Mật khẩu KHÔNG khớp!");
             return false;
         }
+        if (!validatePassword(user.password)) {
+        setErrMsg(
+            "Mật khẩu phải có 8-12 ký tự, ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt!"
+        );
+        return false;
+        }
+        if (user.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+            setErrMsg("Email không hợp lệ!");
+            return false;
+        }
 
         setErrMsg(null);
-
         return true;
     }
 
@@ -70,7 +85,6 @@ const Register = () => {
             try {
                 setLoading(true);
                 let form = new FormData();
-            
                 for (let key in user) {
                     if (key !== 'confirm') {
                         if (key === 'avatar') {
@@ -83,7 +97,6 @@ const Register = () => {
                             form.append(key, user[key]);
                     }
                 }
-
                 console.info(form);
                 console.log("Register URL:", endpoints["register"]);
                 let res = await Apis.post(endpoints['register'], form, {
@@ -91,7 +104,6 @@ const Register = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
                 if (res.status === 201) {
                     console.info("Register successfully!");
                     nav.navigate('Login');
@@ -106,9 +118,7 @@ const Register = () => {
 
     setErrMsg(
         ex.response?.data
-            ? JSON.stringify(ex.response.data)
-            : "Đã có lỗi xảy ra. Vui lòng thử lại sau!"
-    );
+            ? JSON.stringify(ex.response.data) : "Đã có lỗi xảy ra. Vui lòng thử lại sau!");
             } finally {
                 setLoading(false);
             }
@@ -117,25 +127,31 @@ const Register = () => {
 
     return (
         <ScrollView style={MyStyles.padding}>
-            <Text style={MyStyles.title}>ĐĂNG KÝ NGƯỜI DÙNG</Text>
-
-            <HelperText type="error" visible={errMsg}>
-                {errMsg}
-            </HelperText>
+            <Text style={MyStyles.bannerText}>ĐĂNG KÝ NGƯỜI DÙNG</Text>
 
             {info.map(i => <TextInput style={MyStyles.textInput} key={i.field}
                             label={i.label}
                             secureTextEntry={i.secureTextEntry}
                             right={<TextInput.Icon icon={i.icon} />}
                             value={user[i.field]}
-                            onChangeText={t => setUser({...user, [i.field]: t})} />)}
+                            onChangeText={t => {
+                                if (i.field === 'MSSV'){
+                                     t = t.replace(/[^0-9]/g, '').slice(0, 10);
+                            }
+                             setUser({...user, [i.field]: t})}} 
+                            keyboardType={i.field === "MSSV" ? "numeric" : "default"}
+                            maxLength={i.field === "MSSV" ? 10 : undefined}
+                            />)}
+
 
             <TouchableOpacity style={MyStyles.margin} onPress={picker}>
             <Text style={MyStyles.text}>Chọn ảnh đại diện...</Text>
             </TouchableOpacity>    
 
             {user.avatar && <Image  source={{uri: user.avatar.uri}} width={250} style={[MyStyles.avatar, MyStyles.margin]} />}
-
+            <HelperText type="error" visible={errMsg}>
+                {errMsg}
+            </HelperText>
             <Button style={MyStyles.button} loading={loading} disabled={loading} mode="contained" icon="account" onPress={register}>Đăng ký</Button>
 
         </ScrollView>

@@ -6,3 +6,4 @@ cloudinary
 django-oauth-toolkit
 django-rest-swagger
 drf-yasg
+dotenv

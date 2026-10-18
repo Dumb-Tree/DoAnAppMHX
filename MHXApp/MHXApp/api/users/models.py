@@ -1,7 +1,6 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser, UserManager
-
 # Create your models here.
 
 class CustomUserManager(UserManager):
@@ -26,8 +25,10 @@ class User(AbstractUser):
         default=Role.VOLUNTEER,
         blank=False,
     )
-    MSSV = models.CharField(max_length=10, blank=False, null=False)
+    MSSV = models.CharField(max_length=10, blank=False, null=False, unique=True)
     division = models.ForeignKey('division.Division', on_delete=models.SET_NULL, null=True, blank=True, default=None)
+    
+    objects = CustomUserManager()
         
 def __str__(self):
         return f"{self.username} - ({self.role})"
